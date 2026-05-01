@@ -868,9 +868,9 @@ static void smbios_build_type_4_table(MachineState *ms, unsigned instance,
                                 true, tbl_len); /* required */
 
     snprintf(sock_str, sizeof(sock_str), "%s%2x", type4.sock_pfx, instance);
-    SMBIOS_TABLE_SET_STR(4, socket_designation_str, "LGA1700"); //AICodo modify 直接改成12代的LGA1700 接口
+    SMBIOS_TABLE_SET_STR(4, socket_designation_str, sock_str); //AICodo modify 直接改成12代的LGA1700 接口 ZZ
     t->processor_type = 0x03; /* CPU */
-    t->processor_family = 0x01; /* Other use Processor Family 2 field */ //AICodo modify 0xC6代表 Intel® Core™ i7 processor
+    t->processor_family = 0xfe; /* Other use Processor Family 2 field */ //AICodo modify 0xC6代表 Intel® Core™ i7 processor ZZ
     SMBIOS_TABLE_SET_STR(4, processor_manufacturer_str, type4.manufacturer);
     if (type4.processor_id == 0) {
         t->processor_id[0] = cpu_to_le32(smbios_cpuid_version);
@@ -889,9 +889,9 @@ static void smbios_build_type_4_table(MachineState *ms, unsigned instance,
     t->l1_cache_handle = cpu_to_le16(0xFF); /* N/A */
     t->l2_cache_handle = cpu_to_le16(0xFF); /* N/A */
     t->l3_cache_handle = cpu_to_le16(0xFF); /* N/A */
-    SMBIOS_TABLE_SET_STR(4, serial_number_str, "To Be Filled By O.E.M."); //AICodo
-    SMBIOS_TABLE_SET_STR(4, asset_tag_number_str, "To Be Filled By O.E.M."); //AICodo
-    SMBIOS_TABLE_SET_STR(4, part_number_str, "To Be Filled By O.E.M."); //AICodo
+    SMBIOS_TABLE_SET_STR(4, serial_number_str, type4.serial); //AICodo ZZ
+    SMBIOS_TABLE_SET_STR(4, asset_tag_number_str, type4.asset); //AICodo ZZ
+    SMBIOS_TABLE_SET_STR(4, part_number_str, type4.part); //AICodo ZZ
 
     threads_per_socket = machine_topo_get_threads_per_socket(ms);
     cores_per_socket = machine_topo_get_cores_per_socket(ms);
@@ -902,7 +902,7 @@ static void smbios_build_type_4_table(MachineState *ms, unsigned instance,
     t->thread_count = (threads_per_socket > 255) ? 0xFF : threads_per_socket;
 
     t->processor_characteristics = cpu_to_le16(0xFC); /* Unknown */ //AICodo modify 0x4 计算得到代表64-bit Capable
-    t->processor_family2 = cpu_to_le16(0x01); //Other AICodo modify 和t->processor_family保持一致不一致都可以
+    t->processor_family2 = cpu_to_le16(type4.processor_family); //Other AICodo modify 和t->processor_family保持一致不一致都可以 ZZ
 
     if (tbl_len == SMBIOS_TYPE_4_LEN_V30) {
         t->core_count2 = t->core_enabled2 = cpu_to_le16(cores_per_socket);
@@ -1072,15 +1072,15 @@ static void smbios_build_type_17_table(unsigned instance, uint64_t size)
     t->form_factor = 0x0D; /* SODIMM */
     t->device_set = 0; /* Not in a set */
     snprintf(loc_str, sizeof(loc_str), "%s %d", type17.loc_pfx, instance);
-    SMBIOS_TABLE_SET_STR(17, device_locator_str, "ChannelA-DIMM0");   //AICodo modify 内存设备位置
-    SMBIOS_TABLE_SET_STR(17, bank_locator_str, "BANK 0");  //AICodo modify 内存插槽位置
+    SMBIOS_TABLE_SET_STR(17, device_locator_str, loc_str);   //AICodo modify 内存设备位置 ZZ
+    SMBIOS_TABLE_SET_STR(17, bank_locator_str, type17.bank);  //AICodo modify 内存插槽位置 ZZ
      t->memory_type = 0x18; /* DDR3 */  //AICodo modify ddr3类型
     t->type_detail = cpu_to_le16(0x80); /* test 0x80*/ //AICodo modify 0x80代表 Synchronous
     t->speed = cpu_to_le16(1600); //AICodo modify 1600mhz
-    SMBIOS_TABLE_SET_STR(17, manufacturer_str, "Kingston"); //AICodo modify
+    SMBIOS_TABLE_SET_STR(17, manufacturer_str, type17.manufacturer); //AICodo modify ZZ
     SMBIOS_TABLE_SET_STR(17, serial_number_str, type17.serial);//AICodo modify
     SMBIOS_TABLE_SET_STR(17, asset_tag_number_str, type17.asset);//AICodo modify
-    SMBIOS_TABLE_SET_STR(17, part_number_str, "KHX1600C9S3L/32G");//AICodo modify
+    SMBIOS_TABLE_SET_STR(17, part_number_str, type17.part);//AICodo modify ZZ
     t->attributes = 0x02; /* test 1 */ //AICodo modify 1代表 记不得了，你要测一下
     t->configured_clock_speed = t->speed; /* reuse value for max speed */
     t->minimum_voltage = cpu_to_le16(1350); /* Unknown */ //AICodo modify 1.35v
