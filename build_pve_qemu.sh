@@ -16,6 +16,7 @@ chmod +x sedPatch-pve-qemu-kvm7-8-anti-dection.sh
 bash sedPatch-pve-qemu-kvm7-8-anti-dection.sh
 cp ../../smbios.h include/hw/firmware/smbios.h
 cp ../../smbios.c hw/smbios/smbios.c
+echo "Huydd"
 cat ../../smbios.c | grep 32G
 sleep 15
 cp ../../bootsplash.jpg pc-bios/bootsplash.jpg # modify seabios bootsplash.jpg
