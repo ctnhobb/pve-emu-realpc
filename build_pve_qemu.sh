@@ -23,6 +23,8 @@ cp ../../smbios.h include/hw/firmware/smbios.h
 cp ../../smbios.c hw/smbios/smbios.c
 echo "Huydd"
 cat ../../smbios.c | grep 32G
+cat hw/smbios/smbios.c | grep KHX
+cat hw/smbios/smbios.c | grep 32G
 sleep 15
 cp ../../bootsplash.jpg pc-bios/bootsplash.jpg # modify seabios bootsplash.jpg
 sed -i "s/vgabios.bin/vgabios.bin',\n\t'bootsplash.jpg/g" pc-bios/meson.build # modify seabios bootsplash.jpg
